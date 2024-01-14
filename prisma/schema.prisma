@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User{
+  id    String   @id
+  email String @unique @db.VarChar(100)
+  password String @db.VarChar(255)
+
+  name String?
+
+  pronouns String[]
+  cinemaWorker Boolean @default(false)
+  roles String[]
+
+  profileCompleted Boolean @default(false) 
+  isTourComplete Boolean @default(false)
+
+  tourStage Int @default(1)
+
+  accountState String @default("Active")
+
+  token String?
+
+  registered DateTime @default(now())
+  updatedAt DateTime?
+}
+
+model PromOccupations{
+  id    String   @id
+  name String @db.VarChar(100)
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
