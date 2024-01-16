@@ -20,3 +20,7 @@ export type UserDto = {
     registered:Date,
     updatedAt:Date
 }
+
+export type TourStageDto = {
+    tourStage:number
+}

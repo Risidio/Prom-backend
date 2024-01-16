@@ -10,7 +10,7 @@ import { ProfileUpdateDto } from 'src/dto/requests/profileUpdateDto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as _ from 'lodash';
 import { UserDto } from 'src/dto/responses/UserDto';
-import { ApiResponse } from 'src/types';
+import { ApiResponse, TourStageDto } from 'src/types';
 
 @Injectable()
 export class ProfileService {
@@ -97,21 +97,100 @@ export class ProfileService {
         throw new PreconditionFailedException(
           'Tour stage update was not successful.',
         );
-        
+
+      return {
+        code: HttpStatus.OK,
+        message: 'Successful',
+        data: true,
+      };
+    } catch (error) {
+      console.log(error);
+
+      return {
+        code: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'An error occured while updating tour stage.',
+        data: null,
+      };
+    }
+  }
+
+  async checkTourStage(userId):Promise<ApiResponse<TourStageDto | null>>{
+    try {
+      const existingUser = await this.prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+
+      if (!existingUser) throw new NotFoundException('User not found.');
+
+      if (existingUser.tourStage > 5)
         return {
-            code:HttpStatus.OK,
-            message:"Successful",
-            data:true
+          code: HttpStatus.OK,
+          message: 'Tour stages have been completed.',
+          data: {
+            tourStage:existingUser.tourStage
+          },
+        };
+
+      return {
+        code: HttpStatus.OK,
+        message: 'Tour stages have not been completed.',
+        data: {
+          tourStage:existingUser.tourStage
         }
+      };
+    } catch (error) {
+      console.log(error);
+
+      return {
+        code: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'An error occured while checking tour stage.',
+        data: null,
+      };
+    }
+  }
+
+  async getUser(userId: string): Promise<ApiResponse<UserDto>> {
+    try {
+
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: userId
+        },
+      });
+
+      if (!user) throw new NotFoundException('User not found');     
+
+      const data = _.pick(user, [
+        'id',
+        'email',
+        'name',
+        'pronouns',
+        'cinemaWorker',
+        'roles',
+        'profileCompleted',
+        'isTourCompleted',
+        'tourStage',
+        'accountState',
+        'registered',
+        'token',
+        'updatedAt',
+      ]);
+
+      return {
+        code: HttpStatus.OK,
+        message: 'Successful',
+        data
+      };
       
     } catch (error) {
-        console.log(error);
 
-        return {
-            code:HttpStatus.INTERNAL_SERVER_ERROR,
-            message:"An error occured while updating tour stage.",
-            data:null
-        }
+      return {
+        code: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'An error occured while getting user profile',
+        data: null,
+      };
     }
   }
 }
