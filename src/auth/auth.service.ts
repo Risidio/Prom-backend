@@ -81,7 +81,7 @@ export class AuthService {
       await this.updateToken((await newUser).id, tokenResponse.token);
 
       return {
-        code: HttpStatus.OK,
+        code: HttpStatus.CREATED,
         message: 'Successful',
         data: tokenResponse,
       };
