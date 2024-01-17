@@ -44,10 +44,20 @@ export class ProfileController {
     return this.profileService.checkTourStage(userId);
   }
 
+
+  // check profile completion
+  @Get('check-profile-completion')
+  @HttpCode(HttpStatus.OK)
+  checkProfileCompletion(@GetDecodedJwtPayload('access') userId: string ): Promise<ApiResponse<boolean | null>> {
+    return this.profileService.checkProfileCompletion(userId);
+  }
+
   // get user profile
   @Get()
   @HttpCode(HttpStatus.OK)
   getUser(@GetDecodedJwtPayload('access') userId: string ): Promise<ApiResponse<TourStageDto | null>> {
     return this.profileService.getUser(userId);
   }
+
+
 }

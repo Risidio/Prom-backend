@@ -114,7 +114,7 @@ export class ProfileService {
     }
   }
 
-  async checkTourStage(userId):Promise<ApiResponse<TourStageDto | null>>{
+  async checkTourStage(userId): Promise<ApiResponse<TourStageDto | null>> {
     try {
       const existingUser = await this.prisma.user.findUnique({
         where: {
@@ -129,7 +129,7 @@ export class ProfileService {
           code: HttpStatus.OK,
           message: 'Tour stages have been completed.',
           data: {
-            tourStage:existingUser.tourStage
+            tourStage: existingUser.tourStage,
           },
         };
 
@@ -137,8 +137,8 @@ export class ProfileService {
         code: HttpStatus.OK,
         message: 'Tour stages have not been completed.',
         data: {
-          tourStage:existingUser.tourStage
-        }
+          tourStage: existingUser.tourStage,
+        },
       };
     } catch (error) {
       console.log(error);
@@ -153,14 +153,13 @@ export class ProfileService {
 
   async getUser(userId: string): Promise<ApiResponse<UserDto>> {
     try {
-
       const user = await this.prisma.user.findUnique({
         where: {
-          id: userId
+          id: userId,
         },
       });
 
-      if (!user) throw new NotFoundException('User not found');     
+      if (!user) throw new NotFoundException('User not found');
 
       const data = _.pick(user, [
         'id',
@@ -181,16 +180,61 @@ export class ProfileService {
       return {
         code: HttpStatus.OK,
         message: 'Successful',
-        data
+        data,
       };
-      
     } catch (error) {
-
       return {
         code: HttpStatus.INTERNAL_SERVER_ERROR,
         message: 'An error occured while getting user profile',
         data: null,
       };
     }
+  }
+
+  async checkProfileCompletion(userId: string): Promise<ApiResponse<boolean | null>> {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: userId,
+        },
+      });
+
+      if (!user) throw new NotFoundException('User not found');
+
+      let isProfileComplete: boolean = true;
+
+      if (ProfileService.isNullOrUndefined(user?.name) || user?.name?.length == 0) isProfileComplete = false;
+
+      if (ProfileService.isNullOrUndefined(user?.pronouns)  || user?.pronouns?.length == 0) isProfileComplete = false;
+
+      if (ProfileService.isNullOrUndefined(user?.cinemaWorker)  || !user?.cinemaWorker) isProfileComplete = false;
+
+      if (ProfileService.isNullOrUndefined(user?.roles) || user?.roles?.length == 0) isProfileComplete = false;
+
+      if (!isProfileComplete)
+        return {
+          code: HttpStatus.OK,
+          message: 'User profile is not complete',
+          data: null,
+        };
+
+      return {
+        code: HttpStatus.OK,
+        message: 'User profile is complete',
+        data:null
+      };
+    } catch (error) {
+      console.log(error);
+
+      return {
+        code: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'An error occured while checking user profile completion',
+        data: null,
+      };
+    }
+  }
+
+  private static isNullOrUndefined<T>(userProperty:T){
+    return (userProperty == null || userProperty == undefined);
   }
 }
