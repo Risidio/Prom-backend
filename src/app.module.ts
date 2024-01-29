@@ -9,13 +9,32 @@ import { ConfigModule } from '@nestjs/config';
 import { ProfileService } from './profile/profile.service';
 import { ProfileController } from './profile/profile.controller';
 import { ProfileModule } from './profile/profile.module';
+import { CollaboratorModule } from './collaborator/collaborator.module';
+import { CollaboratorController } from './collaborator/collaborator.controller';
+import { CollaboratorService } from './collaborator/collaborator.service';
+import { NotificationController } from './notification/notification.controller';
+import { NotificationService } from './notification/notification.service';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
-  imports: [ConfigModule.forRoot(), AuthModule, PrismaModule, ProfileModule],
-  controllers: [AppController, ProfileController],
-  providers: [AppService,{
-    provide:APP_GUARD,
-    useClass:AtGuard
-  }, ProfileService],
+  imports: [
+    ConfigModule.forRoot(),
+    AuthModule,
+    PrismaModule,
+    ProfileModule,
+    CollaboratorModule,
+    NotificationModule
+  ],
+  controllers: [AppController, ProfileController, CollaboratorController,NotificationController],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AtGuard,
+    },
+    ProfileService,
+    CollaboratorService,
+    NotificationService
+  ],
 })
 export class AppModule {}

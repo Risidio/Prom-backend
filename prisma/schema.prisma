@@ -31,6 +31,8 @@ model User{
 
   token String?
 
+  collaborators String
+
   registered DateTime @default(now())
   updatedAt DateTime?
 }
@@ -41,3 +43,16 @@ model PromOccupations{
   createdAt DateTime @default(now())
   updatedAt DateTime
 }
+
+model Notifications{
+  id    String   @id
+  type String @db.VarChar(100)
+  userId String
+  message String
+  read Boolean
+  state String
+  createdAt DateTime @default(now())
+  updatedAt DateTime
+}
+
+

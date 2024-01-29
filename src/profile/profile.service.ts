@@ -19,7 +19,7 @@ export class ProfileService {
   async updateProfile(
     userId: string,
     request: ProfileUpdateDto,
-  ): Promise<ApiResponse<UserDto>> {
+  ): Promise<ApiResponse<any>> {
     try {
       var user = await this.prisma.user.update({
         where: {
@@ -39,26 +39,25 @@ export class ProfileService {
           'Profile update was not successful.',
         );
 
-      const data = _.pick(user, [
-        'id',
-        'email',
-        'name',
-        'pronouns',
-        'cinemaWorker',
-        'roles',
-        'profileCompleted',
-        'isTourCompleted',
-        'tourStage',
-        'accountState',
-        'registered',
-        'updatedAt',
-      ]);
-
       return {
         code: HttpStatus.OK,
         message: 'Successful',
-        data,
+        data:{
+          id: user.id,
+          email: user.email,
+          name: user.email,
+          pronouns: user.pronouns,
+          cinemaWorker: user.cinemaWorker,
+          roles: user.roles,
+          profileCompleted: user.profileCompleted,
+          isTourComplete: user.isTourComplete,
+          tourStage: user.tourStage,
+          accountState:user.accountState,
+          registered: user.registered,
+          updatedAt: user.updatedAt
+        }
       };
+
     } catch (error) {
       console.log(error);
 
@@ -169,13 +168,15 @@ export class ProfileService {
         'cinemaWorker',
         'roles',
         'profileCompleted',
-        'isTourCompleted',
+        'isTourComplete',
         'tourStage',
         'accountState',
         'registered',
         'token',
         'updatedAt',
       ]);
+
+     
 
       return {
         code: HttpStatus.OK,

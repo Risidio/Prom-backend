@@ -72,6 +72,7 @@ export class AuthService {
           email: signUpRequest.email,
           password: hashedPassword,
           name: '',
+          collaborators : ''
         },
       });
 

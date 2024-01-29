@@ -10,8 +10,9 @@ import {
 import { ProfileService } from './profile.service';
 import { ProfileUpdateDto } from 'src/dto/requests/profileUpdateDto';
 import { TourStageUpdateDto } from 'src/dto/requests/tourStageUpdateDto';
-import { ApiResponse, TourStageDto, UserDto } from 'src/types';
+import { ApiResponse, TourStageDto} from 'src/types';
 import { GetDecodedJwtPayload } from 'src/common/decorators';
+import { UserDto } from 'src/dto/responses/UserDto';
 
 @Controller('profile')
 export class ProfileController {

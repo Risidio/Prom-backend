@@ -6,7 +6,7 @@ export class UserDto{
     cinemaWorker:boolean;
     roles:string[];
     profileCompleted:boolean;
-    isTourCompleted:boolean;
+    isTourComplete:boolean;
     tourStage:number;
     accountState:string;
     registered:Date;
