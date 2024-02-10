@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { AuthDto } from 'src/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import * as bcrypt from 'bcrypt';
+var bcp = require("bcryptjs");
 import { v4 as uuidV4 } from 'uuid';
 import { ApiResponse, TokenResponse} from 'src/types';
 import { JwtService } from '@nestjs/jwt';
@@ -22,7 +22,9 @@ export class AuthService {
   ) {}
 
   async hashData(data: string) {
-    return await bcrypt.hash(data, Number(env.BCRYPT_SALT));
+    var salt = bcp.genSaltSync(Number(env.BCRPTY_SALT));
+    var hash = bcp.hashSync(data,salt);
+    return hash;
   }
 
   async generateToken(userId: string, email: string): Promise<TokenResponse> {
@@ -107,7 +109,7 @@ export class AuthService {
 
       if (!user) throw new ForbiddenException('Access Denied!');
 
-      const passwordMatches = await bcrypt.compare(
+      const passwordMatches = await bcp.compareSync(
         signInRequest.password,
         user.password,
       );
