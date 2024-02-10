@@ -9,3 +9,4 @@ export class AuthDto {
   @IsAlphanumeric()
   password: string;
 }
+
