@@ -21,5 +21,6 @@ jobs:
           application_name: prom-backend
           environment_name: Prom-backend-env
           existing_bucket_name: elasticbeanstalk-eu-west-2-148542715140
+          region: eu-west-2
           version_label: ${{ github.sha }}
           deployment_package: dist.zip
