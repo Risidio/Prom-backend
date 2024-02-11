@@ -8,10 +8,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: 🚚 Get latest code & build
-        run: npm install && npm run build && npm run migrate
+        run: npm install && npm run build
 
       - name: Generate deployment package
         run:  cd ./dist && zip -r ../dist.zip * .*
+
+      - name: Run Migration
+        run:  npm run migrate
        
       - name: Deploy update to server
         uses: einaregilsson/beanstalk-deploy@v18
