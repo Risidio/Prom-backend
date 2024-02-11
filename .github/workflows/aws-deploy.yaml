@@ -11,7 +11,7 @@ jobs:
         run: npm install && npm run build
 
       - name: Copy Procfile to the dist folder
-        run:  cp Procfile ./dist
+        run:  cp Procfile package.json ./dist 
 
       - name: Generate deployment package
         run:  cd ./dist && zip -r ../dist.zip * .*
