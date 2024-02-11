@@ -13,9 +13,7 @@ jobs:
       - name: Generate deployment package
         run:  cd ./dist && zip -r ../dist.zip * .*
 
-      - name: Run Migration
-        run:  npm run migrate
-       
+        
       - name: Deploy update to server
         uses: einaregilsson/beanstalk-deploy@v18
         with:
