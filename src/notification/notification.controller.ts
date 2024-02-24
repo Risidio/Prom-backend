@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   ApiResponse,
   CollaboratorDto,
@@ -29,8 +38,18 @@ export class NotificationController {
   @HttpCode(HttpStatus.OK)
   addNotification(
     @GetDecodedJwtPayload('access') userId: string,
-    @Body() request: AddNotificationDto,  
+    @Body() request: AddNotificationDto,
   ): Promise<ApiResponse<NotificationsDto>> {
-    return this.notificationService.addNotification(userId,request);
+    return this.notificationService.addNotification(userId, request);
+  }
+
+  // set notification status to accept or deny
+  @Put("state/:notificationId")
+  @HttpCode(HttpStatus.OK)
+  updateProfile(
+    @Param() params: any,
+    @Body() request: {state: string},
+  ): Promise<ApiResponse<any>> {
+    return this.notificationService.updateNotificationState(params.notificationId, request.state);
   }
 }

@@ -29,6 +29,7 @@ export type CollaboratorDto = {
     cinemaWorker:boolean,
     roles:string[],
     accountState:string,
+    phoneNumber:string,
 }
 
 export type TourStageDto = {

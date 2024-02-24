@@ -22,4 +22,7 @@ export class AddCollaboratorDto {
 
   @IsNotEmpty()
   accountState: string
+
+  @IsNotEmpty()
+  phoneNumber: string
 }

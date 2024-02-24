@@ -2,6 +2,7 @@ import {
   HttpCode,
   HttpStatus,
   Injectable,
+  NotFoundException,
   PreconditionFailedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -96,6 +97,48 @@ export class NotificationService {
         code: HttpStatus.INTERNAL_SERVER_ERROR,
         message: "An error occured while adding a notification",
         data: null,
+      };
+    }
+  }
+
+  async updateNotificationState(notificationId: string, state: string) {
+    try {
+
+      const existingNotification = await this.prisma.notifications.findUnique({
+        where: {
+          id: notificationId,
+        },
+      });
+
+      if (!existingNotification) throw new NotFoundException('Notification not found.');
+
+      var saveNotification = await this.prisma.notifications.update({
+        where: {
+          id: notificationId,
+        },
+        data: {
+          state,
+          updatedAt: new Date(),
+        },
+      });
+
+      if (!saveNotification)
+        throw new PreconditionFailedException(
+          'Notification state update was not successful.',
+        );
+
+      return {
+        code: HttpStatus.OK,
+        message: 'Successful',
+        data: true,
+      };
+    } catch (error) {
+      console.log(error);
+
+      return {
+        code: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'An error occured while updating notification.',
+        data: false,
       };
     }
   }

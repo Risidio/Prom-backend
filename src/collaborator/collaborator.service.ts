@@ -56,6 +56,7 @@ export class CollaboratorService {
           cinemaWorker: c.cinemaWorker;
           roles: c.roles;
           accountState: c.accountState;
+          phoneNumber: c.phoneNumber;
         });
 
       }
@@ -141,7 +142,8 @@ export class CollaboratorService {
             email:addCollaboratorRequest.email,
             roles:addCollaboratorRequest.roles,
             pronouns:addCollaboratorRequest.pronouns,
-            cinemaWorker:addCollaboratorRequest.cinemaWorker
+            cinemaWorker:addCollaboratorRequest.cinemaWorker,
+            phoneNumber:addCollaboratorRequest.phoneNumber
           },...deserializedData]),
           updatedAt: new Date()
         },
