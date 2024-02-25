@@ -1,1 +1,1 @@
-web: npm run migrate && node main
+web: cd dist && npm run migrate && node main
