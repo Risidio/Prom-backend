@@ -10,10 +10,7 @@ phases:
       - npm run build --production
       - echo Changing working dir to the dist folder
       - cd dist
-  post_build:
-    commands:
-      - echo Applying DB Migrations
-      - npm run migrate --production
+  
 artifacts:
   files:
     - dist/**/*
