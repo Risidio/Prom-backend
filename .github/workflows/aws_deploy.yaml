@@ -1,0 +1,30 @@
+name: Push latest code to AWS Elastic Beanstalk
+on:
+  push:
+    branches: [ main ]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: 🚚 Get latest code & build
+        run: npm install && npm install npx && npm run migrate && npm run build
+
+      - name: Copy Procfile to the dist folder
+        run:  cp Procfile ./dist
+
+      - name: Generate deployment package
+        run:  cd ./dist && zip -r ../dist.zip * .*
+        
+        
+      - name: Deploy update to server
+        uses: einaregilsson/beanstalk-deploy@v18
+        with:
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
+          aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
+          application_name: prom-backend
+          environment_name: Prom-backend-env
+          existing_bucket_name: elasticbeanstalk-eu-west-2-148542715140
+          region: eu-west-2
+          version_label: ${{ github.sha }}
+          deployment_package: dist.zip
