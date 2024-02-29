@@ -1,4 +1,4 @@
-name: Push latest code to AWS Elastic Beanstalk
+name: Push the latest code to AWS Elastic Beanstalk
 on:
   push:
     branches: [ main ]
