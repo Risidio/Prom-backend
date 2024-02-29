@@ -22,8 +22,8 @@ jobs:
         with:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY }}
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
-          application_name: prom-backend
-          environment_name: Prom-backend-env
+          application_name: prom-backend-live
+          environment_name: Prom-backend-live-env
           existing_bucket_name: elasticbeanstalk-eu-west-2-148542715140
           region: eu-west-2
           version_label: ${{ github.sha }}
