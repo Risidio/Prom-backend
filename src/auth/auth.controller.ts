@@ -10,7 +10,9 @@ import { AuthDto } from '../dto';
 import { ApiResponse, TokenResponse } from 'src/types';
 import { GetDecodedJwtPayload, PublicDecorator } from 'src/common/decorators';
 import { UserDto } from 'src/dto/responses/UserDto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

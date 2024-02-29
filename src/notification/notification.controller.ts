@@ -19,7 +19,9 @@ import { GetDecodedJwtPayload, PublicDecorator } from 'src/common/decorators';
 import { AddCollaboratorDto } from 'src/dto/requests/addCollaboratorDto';
 import { NotificationService } from './notification.service';
 import { AddNotificationDto } from 'src/dto/requests/addNotificationDto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Notifications')
 @Controller('notifications')
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}

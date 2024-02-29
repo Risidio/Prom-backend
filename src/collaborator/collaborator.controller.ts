@@ -8,7 +8,9 @@ import {
 import { GetDecodedJwtPayload, PublicDecorator } from 'src/common/decorators';
 import { CollaboratorService } from './collaborator.service';
 import { AddCollaboratorDto } from 'src/dto/requests/addCollaboratorDto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Collaborators')
 @Controller('collaborators')
 export class CollaboratorController {
   constructor(private readonly collaboratorService: CollaboratorService) {}

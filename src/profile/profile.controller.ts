@@ -13,7 +13,9 @@ import { TourStageUpdateDto } from 'src/dto/requests/tourStageUpdateDto';
 import { ApiResponse, TourStageDto} from 'src/types';
 import { GetDecodedJwtPayload } from 'src/common/decorators';
 import { UserDto } from 'src/dto/responses/UserDto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Profile')
 @Controller('profile')
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
