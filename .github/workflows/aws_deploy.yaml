@@ -28,4 +28,5 @@ jobs:
           region: eu-west-2
           version_label: ${{ github.sha }}
           deployment_package: dist.zip
+
           
