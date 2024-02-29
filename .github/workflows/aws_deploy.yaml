@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: 🚚 Get latest code & build
-        run: npm install && npm install npx && npm run build
+        run: npm install && npm run build
 
       - name: Copy Procfile to the dist folder
         run:  cp Procfile ./dist
