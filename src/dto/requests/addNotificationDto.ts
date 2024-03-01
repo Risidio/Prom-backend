@@ -1,23 +1,28 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsAlphanumeric, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class AddNotificationDto {
-
   @IsNotEmpty()
+  @ApiProperty()
   message: string;
 
   @IsNotEmpty()
+  @ApiProperty()
   read: boolean;
 
   @IsNotEmpty()
-  state:string
+  @ApiProperty()
+  state: string;
 
   @IsNotEmpty()
-  createdAt: Date
+  @ApiProperty()
+  createdAt: Date;
 
   @IsNotEmpty()
-  type: string
+  @ApiProperty()
+  type: string;
 
   @IsNotEmpty()
-  userId: string
+  @ApiProperty()
+  userId: string;
 }
-

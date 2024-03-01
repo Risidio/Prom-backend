@@ -42,7 +42,7 @@ export class CollaboratorService {
       let deserializedData:Array<CollaboratorDto>;
 
       if (
-        !existingUser.collaborators 
+        existingUser.collaborators == null || existingUser.collaborators == undefined
       ) {
         existingUser.collaborators = JSON.stringify([]);
       } else {

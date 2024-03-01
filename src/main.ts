@@ -14,7 +14,9 @@ async function bootstrap() {
     .setDescription('The Prom API Description')
     .setVersion('1.0')
     .addTag('prom')
-    .build();
+    .addBearerAuth()
+    .build()
+;
 
   const document = SwaggerModule.createDocument(app, config);
 

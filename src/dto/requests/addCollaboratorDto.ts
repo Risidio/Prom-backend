@@ -1,28 +1,37 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsAlphanumeric, IsEmail, IsNotEmpty } from 'class-validator';
 
 export class AddCollaboratorDto {
   @IsNotEmpty()
+  @ApiProperty()
   id: string;
 
   @IsNotEmpty()
   @IsEmail()
+  @ApiProperty()
   email: string;
 
   @IsNotEmpty()
+  @ApiProperty()
   name: string;
 
   @IsNotEmpty()
-  pronouns:string[]
+  @ApiProperty()
+  pronouns: string[];
 
   @IsNotEmpty()
-  cinemaWorker: boolean
+  @ApiProperty()
+  cinemaWorker: boolean;
 
   @IsNotEmpty()
-  roles:string[]
+  @ApiProperty()
+  roles: string[];
 
   @IsNotEmpty()
-  accountState: string
+  @ApiProperty()
+  accountState: string;
 
   @IsNotEmpty()
-  phoneNumber: string
+  @ApiProperty()
+  phoneNumber: string;
 }
