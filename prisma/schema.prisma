@@ -27,6 +27,8 @@ model User{
   profileCompleted Boolean @default(false) 
   isTourComplete Boolean @default(false)
 
+  avatar Json?
+
   tourStage Int @default(1)
 
   accountState String @default("Active")

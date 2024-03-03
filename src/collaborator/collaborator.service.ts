@@ -42,10 +42,22 @@ export class CollaboratorService {
       let deserializedData:Array<CollaboratorDto>;
 
       if (
-        existingUser.collaborators == null || existingUser.collaborators == undefined
+        existingUser.collaborators == null || existingUser.collaborators == undefined || existingUser.collaborators.trim() == ''
       ) {
         existingUser.collaborators = JSON.stringify([]);
-      } else {
+
+        return {
+          code: HttpStatus.NOT_FOUND,
+          message: 'No collaborators found.',
+          data: {
+            pageNumber: 1,
+            pageSize: 10,
+            totalCount: 0,
+            items: [],
+          },
+        };
+      } 
+
         deserializedData = JSON.parse(existingUser.collaborators);
 
         deserializedData.map((c) => {
@@ -58,8 +70,6 @@ export class CollaboratorService {
           accountState: c.accountState;
           phoneNumber: c.phoneNumber;
         });
-
-      }
 
       if (deserializedData.length < 1) {
         return {
@@ -106,14 +116,32 @@ export class CollaboratorService {
 
       if (!existingUser) throw new NotFoundException('User not found.');
 
-      let collaborators;
+      let collaborators:string;
       let deserializedData:Array<CollaboratorDto>;
 
       if (
-        !existingUser.collaborators ||
-        existingUser.collaborators.length < 1
+        existingUser.collaborators == null || existingUser.collaborators == undefined || existingUser.collaborators.trim() == ''
       ) {
-        existingUser.collaborators = JSON.stringify([addCollaboratorRequest]);
+        existingUser.collaborators = JSON.stringify(new Array(addCollaboratorRequest));
+
+        await this.prisma.user.update({
+          where: {
+            id
+          },
+          data: {
+            collaborators: JSON.stringify([{
+              id:addCollaboratorRequest.id,
+              name:addCollaboratorRequest.name,
+              email:addCollaboratorRequest.email,
+              roles:addCollaboratorRequest.roles,
+              pronouns:addCollaboratorRequest.pronouns,
+              cinemaWorker:addCollaboratorRequest.cinemaWorker,
+              phoneNumber:addCollaboratorRequest.phoneNumber
+            },...deserializedData]),
+            updatedAt: new Date()
+          },
+        });
+        
       } else {
         deserializedData = JSON.parse(existingUser.collaborators);
 
