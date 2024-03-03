@@ -1,1 +1,1 @@
-web: cd dist && nodemon main.js
+web: npm run start:prod
