@@ -17,7 +17,7 @@ jobs:
         run:  cd ./dist && zip -r ../dist.zip * .*
         
       - name: Set environment variable
-        run: export APP_PORT=${{ secrets.APP_PORT }}  && export JWT_EXPIRATION=${{ secrets.APP_JWT_EXP }} && export JWT_SECRET=${{ secrets.APP_JWT_SECRET }} && export BCRYPT_SALT=${{ secrets.APP_SALT }} && export DATABASE_URL=${{ secrets.APP_DB }}
+        run: cd .. && export APP_PORT=${{ secrets.APP_PORT }}  && export JWT_EXPIRATION=${{ secrets.APP_JWT_EXP }} && export JWT_SECRET=${{ secrets.APP_JWT_SECRET }} && export BCRYPT_SALT=${{ secrets.APP_SALT }} && export DATABASE_URL=${{ secrets.APP_DB }}
         
       - name: Deploy update to server
         uses: einaregilsson/beanstalk-deploy@v18
@@ -30,3 +30,6 @@ jobs:
           region: eu-west-2
           version_label: ${{ github.sha }}
           deployment_package: dist.zip
+
+      - name: Run post deploy command
+        run: export APP_PORT=${{ secrets.APP_PORT }}  && export JWT_EXPIRATION=${{ secrets.APP_JWT_EXP }} && export JWT_SECRET=${{ secrets.APP_JWT_SECRET }} && export BCRYPT_SALT=${{ secrets.APP_SALT }} && export DATABASE_URL=${{ secrets.APP_DB }}
