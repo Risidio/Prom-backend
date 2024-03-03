@@ -6,3 +6,6 @@ web: cd dist && export JWT_SECRET=$JWT_SECRET && export BCRYPT_SALT=$BCRYPT_SALT
 
 
 
+
+
+
