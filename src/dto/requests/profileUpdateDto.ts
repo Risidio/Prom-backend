@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Prisma } from '@prisma/client';
 import {
   IsAlphanumeric,
   IsEmail,
@@ -7,6 +8,7 @@ import {
   isNotEmpty,
   minLength,
 } from 'class-validator';
+import { AvatarRequestType } from 'src/types';
 
 export class ProfileUpdateDto {
   @IsNotEmpty()
@@ -17,6 +19,10 @@ export class ProfileUpdateDto {
   @IsNotEmpty()
   @ApiProperty()
   pronouns: string[];
+
+  @IsNotEmpty()
+  @ApiProperty()
+  avatar: AvatarRequestType;
 
   @IsNotEmpty()
   @ApiProperty()

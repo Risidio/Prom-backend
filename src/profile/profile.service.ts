@@ -11,16 +11,21 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as _ from 'lodash';
 import { UserDto } from 'src/dto/responses/UserDto';
 import { ApiResponse, TourStageDto } from 'src/types';
+import { Prisma } from '@prisma/client';
+import { JsonObject } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ProfileService {
   constructor(private prisma: PrismaService) {}
+
 
   async updateProfile(
     userId: string,
     request: ProfileUpdateDto,
   ): Promise<ApiResponse<any>> {
     try {
+      const userQueries: string | any[] = [];
+
       var user = await this.prisma.user.update({
         where: {
           id: userId,
@@ -31,33 +36,17 @@ export class ProfileService {
           cinemaWorker: request.isCinemaWorker,
           roles: request.roles,
           updatedAt: new Date(),
+          avatar: request.avatar as Prisma.JsonObject | any
         },
       });
 
-      if (!user)
-        throw new PreconditionFailedException(
-          'Profile update was not successful.',
-        );
+      
 
       return {
         code: HttpStatus.OK,
         message: 'Successful',
-        data:{
-          id: user.id,
-          email: user.email,
-          name: user.email,
-          pronouns: user.pronouns,
-          cinemaWorker: user.cinemaWorker,
-          roles: user.roles,
-          profileCompleted: user.profileCompleted,
-          isTourComplete: user.isTourComplete,
-          tourStage: user.tourStage,
-          accountState:user.accountState,
-          registered: user.registered,
-          updatedAt: user.updatedAt
-        }
+        data: request,
       };
-
     } catch (error) {
       console.log(error);
 
@@ -173,10 +162,10 @@ export class ProfileService {
         'accountState',
         'registered',
         'token',
-        'updatedAt',
+        'updatedAt'
       ]);
-
-     
+      
+       data["avatar"] = user.avatar as JsonObject;
 
       return {
         code: HttpStatus.OK,
@@ -192,7 +181,9 @@ export class ProfileService {
     }
   }
 
-  async checkProfileCompletion(userId: string): Promise<ApiResponse<boolean | null>> {
+  async checkProfileCompletion(
+    userId: string,
+  ): Promise<ApiResponse<boolean | null>> {
     try {
       const user = await this.prisma.user.findUnique({
         where: {
@@ -204,13 +195,29 @@ export class ProfileService {
 
       let isProfileComplete: boolean = true;
 
-      if (ProfileService.isNullOrUndefined(user?.name) || user?.name?.length == 0) isProfileComplete = false;
+      if (
+        ProfileService.isNullOrUndefined(user?.name) ||
+        user?.name?.length == 0
+      )
+        isProfileComplete = false;
 
-      if (ProfileService.isNullOrUndefined(user?.pronouns)  || user?.pronouns?.length == 0) isProfileComplete = false;
+      if (
+        ProfileService.isNullOrUndefined(user?.pronouns) ||
+        user?.pronouns?.length == 0
+      )
+        isProfileComplete = false;
 
-      if (ProfileService.isNullOrUndefined(user?.cinemaWorker)  || !user?.cinemaWorker) isProfileComplete = false;
+      if (
+        ProfileService.isNullOrUndefined(user?.cinemaWorker) ||
+        !user?.cinemaWorker
+      )
+        isProfileComplete = false;
 
-      if (ProfileService.isNullOrUndefined(user?.roles) || user?.roles?.length == 0) isProfileComplete = false;
+      if (
+        ProfileService.isNullOrUndefined(user?.roles) ||
+        user?.roles?.length == 0
+      )
+        isProfileComplete = false;
 
       if (!isProfileComplete)
         return {
@@ -222,7 +229,7 @@ export class ProfileService {
       return {
         code: HttpStatus.OK,
         message: 'User profile is complete',
-        data:null
+        data: null,
       };
     } catch (error) {
       console.log(error);
@@ -235,7 +242,7 @@ export class ProfileService {
     }
   }
 
-  private static isNullOrUndefined<T>(userProperty:T){
-    return (userProperty == null || userProperty == undefined);
+  private static isNullOrUndefined<T>(userProperty: T) {
+    return userProperty == null || userProperty == undefined;
   }
 }

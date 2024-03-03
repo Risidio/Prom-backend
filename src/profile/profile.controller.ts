@@ -59,7 +59,7 @@ export class ProfileController {
   // get user profile
   @Get()
   @HttpCode(HttpStatus.OK)
-  getUser(@GetDecodedJwtPayload('access') userId: string ): Promise<ApiResponse<TourStageDto | null>> {
+  getUser(@GetDecodedJwtPayload('access') userId: string ): Promise<ApiResponse<UserDto | null>> {
     return this.profileService.getUser(userId);
   }
 
