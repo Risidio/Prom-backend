@@ -23,10 +23,9 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_KEY }}
           application_name: ${{ secrets.AWS_APP_NAME }}
           environment_name: ${{ secrets.AWS_ENV_NAME }}
-          existing_bucket_name: ${{ secrets.AWS_BUCKET_NAME }}
+          existing_bucket_name: elasticbeanstalk-eu-west-2-148542715140
           region: eu-west-2
           version_label: ${{ github.sha }}
-          use_existing_version_if_available: true
           deployment_package: dist.zip
 
 
