@@ -7,7 +7,7 @@ import {
   PreconditionFailedException,
 } from '@nestjs/common';
 import { ProfileUpdateDto } from 'src/dto/requests/profileUpdateDto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/prismaClientService/prisma.service';
 import * as _ from 'lodash';
 import { UserDto } from 'src/dto/responses/UserDto';
 import { ApiResponse, TourStageDto } from 'src/types';

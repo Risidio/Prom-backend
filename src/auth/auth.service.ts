@@ -1,24 +1,37 @@
 import {
+  BadRequestException,
   ForbiddenException,
   HttpCode,
   HttpStatus,
   Injectable,
+  NotFoundException,
+  PreconditionFailedException,
 } from '@nestjs/common';
 import { AuthDto } from 'src/dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/prismaClientService/prisma.service';
 var bcp = require('bcryptjs');
 import { v4 as uuidV4 } from 'uuid';
-import { ApiResponse, TokenResponse } from 'src/types';
+import {
+  ApiResponse,
+  ForgotPasswordDto,
+  TokenResponse,
+  VerifyPasswordDto,
+} from 'src/types';
 import { JwtService } from '@nestjs/jwt';
 import { env } from 'process';
 import * as _ from 'lodash';
 import { UserDto } from 'src/dto/responses/UserDto';
+import { MailService } from 'src/mail/mail.service';
+import { ok } from 'assert';
+import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
+import { ResetPasswordDto } from 'src/dto/requests/resetPasswordDto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private readonly mailService: MailService,
   ) {}
 
   async hashData(data: string) {
@@ -62,9 +75,9 @@ export class AuthService {
 
     if (existingUser)
       throw new ForbiddenException({
-        message:"Already registered. Sign In",
+        message: 'An account has already been created for this email.',
         code: HttpStatus.FORBIDDEN,
-        data:null
+        data: null,
       });
 
     const hashedPassword = await this.hashData(signUpRequest.password);
@@ -102,25 +115,27 @@ export class AuthService {
       },
     });
 
-    if (!user) throw new ForbiddenException({
-      message:"Access Denied",
-      code: HttpStatus.FORBIDDEN,
-      data:null
-    });
+    if (!user)
+      throw new ForbiddenException({
+        message: 'Access Denied',
+        code: HttpStatus.FORBIDDEN,
+        data: null,
+      });
 
     const passwordMatches = await bcp.compareSync(
       signInRequest.password,
       user.password,
     );
 
-    if (!passwordMatches) throw new ForbiddenException({
-      message:"Invalid credentials",
-      code: HttpStatus.FORBIDDEN,
-      data:null
-    });
+    if (!passwordMatches)
+      throw new ForbiddenException({
+        message: 'Invalid credentials',
+        code: HttpStatus.FORBIDDEN,
+        data: null,
+      });
 
     try {
-      await this.jwtService.verifyAsync(user?.token, {
+      var verifyResponse = await this.jwtService.verifyAsync(user?.token, {
         secret: env.JWT_SECRET,
       });
 
@@ -150,18 +165,34 @@ export class AuthService {
 
       await this.updateToken(user.id, tokenResponse.token);
 
-      data.token = tokenResponse?.token;
+      user.token = tokenResponse?.token;
 
       return {
         code: HttpStatus.OK,
         message: 'Successful',
-        data,
+        data: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          pronouns: user.pronouns,
+          cinemaWorker: user.cinemaWorker,
+          roles: user.roles,
+          profileCompleted: user.profileCompleted,
+          isTourComplete: user.isTourComplete,
+          tourStage: user.tourStage,
+          accountState: user.accountState,
+          registered: user.registered,
+          token: user.token,
+          updatedAt: user.updatedAt,
+        },
       };
     }
   }
 
   async logout(userId: string): Promise<ApiResponse<boolean>> {
     try {
+      this.jwtService;
+
       await this.prisma.user.updateMany({
         where: {
           id: userId,
@@ -170,7 +201,7 @@ export class AuthService {
           },
         },
         data: {
-          token: null,
+          token: '',
         },
       });
 
@@ -188,5 +219,152 @@ export class AuthService {
         data: null,
       };
     }
+  }
+
+  async forgotpassword(
+    request: ForgotPasswordDto,
+  ): Promise<ApiResponse<boolean>> {
+    const existingUser = await this.prisma.user.findUnique({
+      where: {
+        email: request.email,
+      },
+    });
+
+    if (!existingUser)
+      throw new ForbiddenException({
+        message: "You don't have an account. Register to create an account.",
+        code: HttpStatus.FORBIDDEN,
+        data: null,
+      });
+
+    let code = uuidV4;
+
+    let token = await this.jwtService.signAsync(
+      {
+        email: request.email,
+      },
+      {
+        expiresIn: process.env.RESET_PASSWORD_EXPIRATION,
+        secret: process.env.RESET_PASSWORD_SECRET,
+      },
+    );
+
+    const newRecoveryCode = this.prisma.recoveryCode.create({
+      data: {
+        id: code.toString(),
+        email: request.email,
+        token,
+      },
+    });
+
+    await this.mailService.SendMail({ email: request.email, token });
+
+    return {
+      code: HttpStatus.OK,
+      message: 'Successful sent a password reset email.',
+      data: true,
+    };
+  }
+
+  async verifypasswordcode(
+    request: VerifyPasswordDto,
+  ): Promise<ApiResponse<boolean>> {
+    const passwordRecoveryCode = await this.prisma.recoveryCode.findUnique({
+      where: {
+        token: request.token,
+      },
+    });
+
+    if (!passwordRecoveryCode)
+      throw new NotFoundException({
+        code: HttpStatus.NOT_FOUND,
+        message: 'Invalid password token not found.',
+        data: false,
+      });
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: request.email,
+      },
+    });
+
+    if (!user)
+      throw new ForbiddenException({
+        code: HttpStatus.FORBIDDEN,
+        message: 'Reset password denied.',
+        data: false,
+      });
+
+    try {
+      let verifytoken = await this.jwtService.verifyAsync(request.email, {
+        secret: process.env.RESET_PASSWORD_SECRET,
+      });
+
+      return {
+        code: HttpStatus.OK,
+        message: 'Password recovery verified.',
+        data: true,
+      };
+    } catch (error) {
+      console.log(error);
+
+      throw new PreconditionFailedException({
+        code: HttpStatus.PRECONDITION_FAILED,
+        message:
+          'An error occured while verifying the password reset credentials.',
+        data: false,
+      });
+    }
+  }
+
+  async updatePassword(
+    request: ResetPasswordDto,
+  ): Promise<ApiResponse<boolean>> {
+    const passwordRecoveryCode = false;
+
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: request.email,
+      },
+    });
+
+    if (!user)
+      throw new ForbiddenException({
+        message: "You don't have an account. Register to create an account.",
+        code: HttpStatus.FORBIDDEN,
+        data: false,
+      });
+
+    var newHashedPassword = await this.hashData(request.password);
+
+    if (!newHashedPassword)
+      throw new PreconditionFailedException({
+        message: "Couldn't update user's password.",
+        code: HttpStatus.PRECONDITION_FAILED,
+        data: false,
+      });
+
+    var updatedUser = await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        password: newHashedPassword,
+        updatedAt: new Date(),
+      },
+    });
+
+    if (!updatedUser)
+      throw new PreconditionFailedException({
+        message: "Couldn't update user's password.",
+        code: HttpStatus.PRECONDITION_FAILED,
+        data: false,
+      });
+
+    return {
+      code: HttpStatus.OK,
+      message: 'Password updated successfully.',
+      data: true,
+    };
   }
 }

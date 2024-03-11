@@ -7,7 +7,7 @@ import {
   PreconditionFailedException,
 } from '@nestjs/common';
 import { AuthDto } from 'src/dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/prismaClientService/prisma.service';
 var bcp = require('bcryptjs');
 import { v4 as uuidV4 } from 'uuid';
 import {

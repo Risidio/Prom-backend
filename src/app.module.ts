@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { PrismaModule } from './prisma/prisma.module';
+import { PrismaModule } from './prismaClientService/prisma.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './common/guards';
 import { ConfigModule } from '@nestjs/config';
@@ -15,6 +15,8 @@ import { CollaboratorService } from './collaborator/collaborator.service';
 import { NotificationController } from './notification/notification.controller';
 import { NotificationService } from './notification/notification.service';
 import { NotificationModule } from './notification/notification.module';
+import { MailService } from './mail/mail.service';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -23,9 +25,15 @@ import { NotificationModule } from './notification/notification.module';
     PrismaModule,
     ProfileModule,
     CollaboratorModule,
-    NotificationModule
+    NotificationModule,
+    MailModule,
   ],
-  controllers: [AppController, ProfileController, CollaboratorController,NotificationController],
+  controllers: [
+    AppController,
+    ProfileController,
+    CollaboratorController,
+    NotificationController,
+  ],
   providers: [
     AppService,
     {
@@ -34,10 +42,8 @@ import { NotificationModule } from './notification/notification.module';
     },
     ProfileService,
     CollaboratorService,
-    NotificationService
+    NotificationService,
+    MailService
   ],
 })
 export class AppModule {}
-
-
-

@@ -24,6 +24,8 @@ export class UserDto{
     @ApiProperty()
     accountState:string;
     @ApiProperty()
+    token:string;
+    @ApiProperty()
     registered:Date;
     @ApiProperty()
     updatedAt:Date;

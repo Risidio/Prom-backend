@@ -9,6 +9,7 @@ CREATE TABLE "User" (
     "roles" TEXT[],
     "profileCompleted" BOOLEAN NOT NULL DEFAULT false,
     "isTourComplete" BOOLEAN NOT NULL DEFAULT false,
+    "avatar" JSONB,
     "tourStage" INTEGER NOT NULL DEFAULT 1,
     "accountState" TEXT NOT NULL DEFAULT 'Active',
     "token" TEXT,
@@ -44,5 +45,18 @@ CREATE TABLE "Notifications" (
     CONSTRAINT "Notifications_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "RecoveryCode" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "token" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "RecoveryCode_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "RecoveryCode_token_key" ON "RecoveryCode"("token");

@@ -5,7 +5,7 @@ import {
   NotFoundException,
   PreconditionFailedException,
 } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { PrismaService } from 'src/prismaClientService/prisma.service';
 import {
   ApiResponse,
   PaginatedResults,
